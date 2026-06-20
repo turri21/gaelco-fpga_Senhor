@@ -36,3 +36,6 @@ Desktop.ini
 *.swp
 *~
 .vscode/
+
+# Excepción: el .rbf distribuible precompilado SÍ va al repo
+!releases/*.rbf

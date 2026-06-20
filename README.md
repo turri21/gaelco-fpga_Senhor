@@ -14,6 +14,9 @@ vídeo Gaelco (2 tilemaps + sprites) + VRAM cifrada + **OKI MSM6295**.
 atracción y partida. El DS5002 se implementa con el core **mc8051** (Oregano, incluido en jtframe)
 adaptado al timing del DS5002.
 
+Hay un `.rbf` precompilado en [`releases/`](releases/) — **distribuible**: el firmware del DS5002 se
+carga en *runtime* desde el `.mra`, no va horneado en el bitstream.
+
 ## Construir
 
 Este repo contiene **solo el código del core** (`cores/wrally/`). El framework y los cores de
@@ -37,6 +40,22 @@ cores/wrally/
 
 **No se incluyen** (material con copyright). Cada cual aporta las ROMs originales de su placa. El
 `.mra` describe cómo ensamblarlas.
+
+## Trabajos pendientes
+
+El core es **jugable**, pero quedan cosas por pulir (no bloquean la partida):
+
+- **Glitches rojos de sombra en la fase de nieve (Monte Carlo):**
+  - *Balizas* de la carretera: aparecen como una barra roja sólida (en la placa real / MAME son
+    imperceptibles, tiñen apenas la nieve blanca). Es el camino sombra-sobre-tilemap.
+  - *Arco de salida*: glitches rojos a la derecha, solo en partida. El propio MAME documenta este
+    glitch como un esquema de prioridad "bogus" (no hay referencia dorada).
+- **Build del `.rbf` distribuible:** cargar el firmware del DS5002 en *runtime* (en vez de hornearlo en
+  el bitstream) necesita un ajuste en la plantilla `prom_dwnld.v` de jtframe (`jtframe_dual_ram` de
+  doble reloj + dirección completa `ioctl_addr_noheader`). El `.rbf` de `releases/` ya está construido
+  así; un `jtcore wrally` "a pelo" hornearía el firmware.
+- **Timing:** ~−9.5 ns de setup slack en un path del mc8051 (cen-paced, no funcional); falta afinar el
+  multicycle del SDC para un build timing-limpio.
 
 ## Créditos
 
