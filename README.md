@@ -24,7 +24,12 @@ terceros (jtframe, fx68k, jt6295, mc8051) **no se incluyen**: los aporta jtframe
 
 1. Clona [jtcores](https://github.com/jotego/jtcores) (trae jtframe + fx68k + jt6295 como módulos).
 2. Coloca `cores/wrally/` de este repo dentro de tu checkout de jtcores.
-3. Compila con la herramienta de jtframe (`jtcore wrally -mister`, etc.).
+3. Genera el proyecto: `jtcore wrally -mister`.
+4. **Aplica el parche del DS5002 en runtime** (imprescindible para un `.rbf` distribuible):
+   `python3 cores/wrally/tools/patch_dallas_runtime.py <jtcores>/cores/wrally/mister/jtwrally_game_sdram.v`
+5. Compila con Quartus.
+
+📋 **Pasos detallados y el porqué del parche en [`BUILD.md`](BUILD.md).**
 
 Estructura del core:
 ```
@@ -33,7 +38,7 @@ cores/wrally/
 ├── cfg/    macros.def, mem.yaml, files.yaml
 ├── mra/    definición .mra (cómo ensamblar las ROMs)
 ├── syn/    wrally_clk48_96.sdc (constraints de timing)
-└── tools/  regeneración del core mc8051 (ghdl → Verilog)
+└── tools/  patch_dallas_runtime.py (DS5002 en runtime) + regen del core mc8051 (ghdl → Verilog)
 ```
 
 ## ROMs
@@ -50,10 +55,6 @@ El core es **jugable**, pero quedan cosas por pulir (no bloquean la partida):
     imperceptibles, tiñen apenas la nieve blanca). Es el camino sombra-sobre-tilemap.
   - *Arco de salida*: glitches rojos a la derecha, solo en partida. El propio MAME documenta este
     glitch como un esquema de prioridad "bogus" (no hay referencia dorada).
-- **Build del `.rbf` distribuible:** cargar el firmware del DS5002 en *runtime* (en vez de hornearlo en
-  el bitstream) necesita un ajuste en la plantilla `prom_dwnld.v` de jtframe (`jtframe_dual_ram` de
-  doble reloj + dirección completa `ioctl_addr_noheader`). El `.rbf` de `releases/` ya está construido
-  así; un `jtcore wrally` "a pelo" hornearía el firmware.
 - **Timing:** ~−9.5 ns de setup slack en un path del mc8051 (cen-paced, no funcional); falta afinar el
   multicycle del SDC para un build timing-limpio.
 
