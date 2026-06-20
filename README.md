@@ -46,6 +46,16 @@ cores/wrally/
 - **MAME** — referencia de hardware (driver `wrally.cpp`)
 - Gaelco SA — por liberar el código del DS5002FP para emulación
 
+## Agradecimientos
+
+- A **José Tejada (jotego)**, por su fantástico trabajo de tantos años y, muy en especial, por su
+  framework **JTFRAME / jtcore**, sobre el que se construye este core.
+- A **Sorgelig** y todo el proyecto **MiSTer FPGA**.
+- A la **comunidad MiSTer FPGA** y al **canal de Telegram en español**.
+- A la **comunidad MAME**, porque sin su trabajo de preservación este core no sería posible.
+- Y a **Anthropic**, por **Claude**, que permite convertir un proyecto de esta envergadura en casi un
+  juego de niños.
+
 ## Licencia
 
 **GPLv3** (ver [`LICENSE`](LICENSE)) — obligado por las dependencias jtframe / fx68k / jt6295.
