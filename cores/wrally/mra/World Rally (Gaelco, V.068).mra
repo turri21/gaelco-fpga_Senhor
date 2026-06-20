@@ -27,7 +27,7 @@
        0x300000  OKI samples 1MB (worldr14, worldr15)                                      -> ba2 (DW8)
 -->
 <misterromdescription>
-    <name>World Rally (Gaelco, V.066)</name>
+    <name>World Rally (Gaelco, V.068)</name>
     <setname>wrally</setname>
     <rbf>wrally</rbf>
     <mameversion>0288</mameversion>
@@ -59,6 +59,11 @@
         <!-- 0x300000: samples del OKI (1 MB) -->
         <part name="worldr14.c01" crc="e931c2ee"/>
         <part name="worldr15.c03" crc="11f0fe2c"/>
+
+        <!-- 0x400000: firmware DS5002 (32 KB) = region PROM (JTFRAME_PROM_START). V.067: AÑADIDO al stream
+             para cargarlo en RUNTIME (antes horneado por SYNHEX en el .rbf). Directo, sin interleave/byteswap
+             (= ROM_LOAD de MAME a gaelco_ds5002fp:sram). Las 3 regiones anteriores llenan exacto hasta 0x400000. -->
+        <part name="wrdallas.bin" crc="547d1768"/>
     </rom>
 
     <switches default="df,ff" base="20">

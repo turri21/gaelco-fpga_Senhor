@@ -353,11 +353,11 @@ module jtwrally_game(
     // OKI 14-bit con signo -> snd 16-bit. V.058 puso x4 ({snd14,2'b00}): satura los PICOS
     // (snd14=+-8191 -> +-32764 = fondo de escala) pero el nivel MEDIO del OKI es bajo -> "suena bajo".
     // V.059: GAIN x8 (+6dB vs x4) CON SATURACION (un shift a secas haria wraparound = chasquidos).
-    // V.065+ (2026-06-19): SUBIDO a x16 (+6dB vs x8, 2x) — sonaba mas bajo que otros cores (Out Run).
-    // Como el promedio del OKI es bajo, x16 sube el volumen percibido y solo CLAMP-ea los picos fuertes.
-    // snd14 signed [13:0] -> x16 = +-131056 (18 bits) -> clamp a signed 16b [-32768,+32767].
-    // (Si distorsiona por exceso de clip, bajar a x12; si aun bajo, subir a x24/x32.)
-    wire signed [17:0] snd_g8 = $signed(snd14) * 18'sd16;
+    // V.065 (2026-06-19): x16 (2x vs x8). V.067: BAJADO a x12 — x16 SATURABA (reportado en CRT por el
+    // jack analogico; demasiado clip de picos). x12 (1.5x vs x8) sube el nivel medio pero recorta menos.
+    // snd14 signed [13:0] -> x12 = +-98292 (18 bits) -> clamp a signed 16b [-32768,+32767].
+    // (Si aun satura, bajar a x10/x8; si queda bajo, subir a x14.)
+    wire signed [17:0] snd_g8 = $signed(snd14) * 18'sd12;
     assign snd = ( snd_g8 >  18'sd32767 ) ?  16'sd32767 :
                  ( snd_g8 < -18'sd32768 ) ? -16'sd32768 :
                                              snd_g8[15:0];

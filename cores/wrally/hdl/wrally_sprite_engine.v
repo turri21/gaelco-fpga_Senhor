@@ -100,6 +100,15 @@ module wrally_sprite_engine (
     wire        spr_on = shad_r ? pen[3] : (pen != 4'd0);
     wire [11:0] lb_wd  = shad_r ? {1'b1, pen[2:0], 8'd0}     // {shadow_en, shadowlevel, (color/pen sin usar)}
                                 : {1'b0, 3'd0, color_r, pen}; // {!shadow, 0, color, pen}
+    // ---- RMW de SOMBRA (MAME gaelco_wrally_sprites 137-139): la sombra sobre un sprite YA pintado
+    //   (pen!=0, no-sombra) CONSERVA su color/pen y le ANADE el modificador (shadow_en+shadowlevel) en
+    //   vez de borrarlo -> el coche/baliza siguen visibles, con el tinte de la luz. (Antes "ultimo gana"
+    //   sobrescribia con pen=0 -> el coche desaparecia bajo el haz; las balizas quedaban barra-mascara.) ----
+    wire [9:0]  lb_wa    = (xpos - 10'd8);
+    wire [11:0] lb_cur   = wbank_r ? lb1[lb_wa] : lb0[lb_wa];
+    wire        cur_norm = (lb_cur[11]==1'b0) && (lb_cur[3:0]!=4'd0);   // pixel de sprite NORMAL ya presente
+    wire [11:0] lb_mrg   = (shad_r && cur_norm) ? {1'b1, pen[2:0], lb_cur[7:0]} : lb_wd;
+    wire        lb_keep  = shad_r && cur_norm;   // en merge: conservar el high del sprite de debajo
 
     // ---- intersección sprite/línea (combinacional sobre w0_r en TEST) ----
     wire [7:0] sy_c   = 8'd240 - w0_r[7:0];
@@ -119,8 +128,8 @@ module wrally_sprite_engine (
             if (wbank_r) begin lb1[clr_i[8:0]] <= 12'd0; lb1h[clr_i[8:0]] <= 1'b0; end
             else         begin lb0[clr_i[8:0]] <= 12'd0; lb0h[clr_i[8:0]] <= 1'b0; end
         end else if (state==PWR && spr_on && xin) begin
-            if (wbank_r) begin lb1[xpos - 10'd8] <= lb_wd; lb1h[xpos - 10'd8] <= high_r; end
-            else         begin lb0[xpos - 10'd8] <= lb_wd; lb0h[xpos - 10'd8] <= high_r; end
+            if (wbank_r) begin lb1[lb_wa] <= lb_mrg; if(!lb_keep) lb1h[lb_wa] <= high_r; end
+            else         begin lb0[lb_wa] <= lb_mrg; if(!lb_keep) lb0h[lb_wa] <= high_r; end
         end
     end
 

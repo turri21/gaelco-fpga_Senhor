@@ -122,8 +122,14 @@ module wrally_video_top #(
     // normal: 0x200 + (color<<4) + pen. tidx_pre (1 ce antes de r_tm) se alinea con spr_sr[SPN].
     wire       spr_shadow_a = spr_sr[SPN][11];
     wire [2:0] spr_sl_a     = spr_sr[SPN][10:8];
-    assign palb_a = spr_shadow_a ? {spr_sl_a, tidx_pre}            // banco sombra del tile de debajo
-                                 : {3'b0, 2'b10, spr_sr[SPN][7:0]}; // 0x200 + color<<4 + pen
+    wire       spr_pen_a    = (spr_sr[SPN][3:0] != 4'd0);  // ¿hay pen? (coche/baliza bajo la sombra)
+    // SOMBRA (MAME mix_sprites 182-184): si hay pen!=0 (coche bajo la luz) -> el PEN DEL COCHE en el banco
+    // shadowlevel ((0x200+color+pen) + shadowlevel<<10) = el coche con el tinte de luz, NO desaparece.
+    // Si pen==0 -> sombra sobre fondo (tile de debajo en banco shadowlevel = el haz ilumina la carretera).
+    // Si no es sombra -> sprite normal.
+    assign palb_a = (spr_shadow_a & spr_pen_a) ? {spr_sl_a, 2'b10, spr_sr[SPN][7:0]} // coche+sombra
+                  : spr_shadow_a               ? {spr_sl_a, tidx_pre}                // sombra sobre fondo
+                  :                              {3'b0, 2'b10, spr_sr[SPN][7:0]};     // sprite normal
     wire [3:0] spr_pen    = spr_sr[SPN+1][3:0];   // pen alineado con palb_q
     wire       spr_high   = spr_sr[SPN+1][12];    // high_priority alineado con el pen
     wire       spr_shadow = spr_sr[SPN+1][11];    // es-sombra alineado con palb_q/r_sp
