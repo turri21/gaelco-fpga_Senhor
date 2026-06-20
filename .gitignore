@@ -1,0 +1,38 @@
+# === gaelco-fpga — solo el código fuente del core va al repo ===
+
+# ROMs / material con copyright (cada uno aporta las suyas)
+*.bin
+*.rom
+*.zip
+*.hex
+*.mem
+
+# Artefactos de compilación (Quartus / build)
+*.rbf
+*.sof
+*.pof
+*.qpf
+*.qsf
+output_files/
+db/
+incremental_db/
+*.rpt
+*.summary
+*.qws
+*.jdi
+*.pin
+*.smsg
+
+# Simulación
+obj_dir/
+*.vcd
+*.fst
+*.exe
+
+# SO / editores
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*~
+.vscode/
