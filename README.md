@@ -27,6 +27,8 @@ loaded at *runtime* from the `.mra`, it is not baked into the bitstream.
 > (2 tilemaps + sprites, 4bpp, xBGR-555) + **OKI MSM6295**. **Simpler than World Rally: no DS5002**
 > coprocessor. Built reusing the same infrastructure (fx68k, jt6295, jtframe). Prebuilt `.rbf` for each
 > in [`releases/`](releases/); no DS5002 patch needed. **⚠️ All three are BETA** (see Known issues).
+> **HDMI only for now:** analog/CRT (15 kHz) output is not working yet — cause identified (horizontal-sync
+> timing, `HTOTAL` 400→512 for ~15.6 kHz hsync, like World Rally); fix pending a rebuild.
 
 ### Squash (Gaelco, 1992) — *beta*
 68000 @10 MHz, encrypted VRAM. **Status: playable on MiSTer (beta).** `jtsquash_V008.rbf`.
@@ -147,6 +149,9 @@ carga en *runtime* desde el `.mra`, no va horneado en el bitstream.
 > coprocesador DS5002.** Construidos reutilizando la misma infraestructura (fx68k, jt6295, jtframe).
 > `.rbf` precompilado de cada uno en [`releases/`](releases/); no necesitan el parche del DS5002.
 > **⚠️ Los tres son BETA** (ver Trabajos pendientes).
+> **De momento solo HDMI:** la salida analógica/CRT (15 kHz) aún no funciona — causa identificada
+> (timing de sincronismo horizontal, `HTOTAL` 400→512 para hsync ~15,6 kHz, como World Rally); fix
+> pendiente de recompilar.
 
 ### Squash (Gaelco, 1992) — *beta*
 68000 @10 MHz, VRAM cifrada. **Estado: jugable en MiSTer (beta).** `jtsquash_V008.rbf`.
