@@ -23,18 +23,20 @@ the DS5002 timing.
 A prebuilt `.rbf` is available in [`releases/`](releases/) — **distributable**: the DS5002 firmware is
 loaded at *runtime* from the `.mra`, it is not baked into the bitstream.
 
-### Gaelco Type-1 cores (`gaelco.cpp`): Squash, Thunder Hoop, Biomechanical Toy
-Same hardware family: **MC68000** + Gaelco custom video (2 tilemaps + sprites, 4bpp, xBGR-555) + **OKI
-MSM6295**. **Simpler than World Rally: no DS5002** coprocessor. Built reusing the same infrastructure
-(fx68k, jt6295, jtframe).
+> The next three are the **Gaelco Type-1 family** (`gaelco.cpp`): **MC68000** + Gaelco custom video
+> (2 tilemaps + sprites, 4bpp, xBGR-555) + **OKI MSM6295**. **Simpler than World Rally: no DS5002**
+> coprocessor. Built reusing the same infrastructure (fx68k, jt6295, jtframe). Prebuilt `.rbf` for each
+> in [`releases/`](releases/); no DS5002 patch needed. **⚠️ All three are BETA** (see Known issues).
 
-- **Squash** (Gaelco, 1992) — 68000 @10 MHz, encrypted VRAM. **Status: playable on MiSTer.**
-- **Thunder Hoop** (Gaelco, 1992) — 68000 @12 MHz, encrypted VRAM, gfx with `[0,2,1,3]` de-interleave.
-  **Status: working on MiSTer** (boot, video, audio).
-- **Biomechanical Toy** (Gaelco, 1994/95) — 68000 @12 MHz, *plain VRAM* (no encryption). **Status:
-  working on MiSTer.**
+### Squash (Gaelco, 1992) — *beta*
+68000 @10 MHz, encrypted VRAM. **Status: playable on MiSTer (beta).** `jtsquash_V008.rbf`.
 
-Prebuilt `.rbf` for each in [`releases/`](releases/). No DS5002 patch needed (they have no MCU).
+### Thunder Hoop (Gaelco, 1992) — *beta*
+68000 @12 MHz, encrypted VRAM, gfx with `[0,2,1,3]` de-interleave. **Status: working on MiSTer (beta)**
+(boot, video, audio). `jtthoop_V004.rbf`.
+
+### Biomechanical Toy (Gaelco, 1994/95) — *beta*
+68000 @12 MHz, *plain VRAM* (no encryption). **Status: working on MiSTer (beta).** `jtbiomtoy_V001.rbf`.
 
 ## Build
 
@@ -67,8 +69,9 @@ cores/wrally/
 
 ## Known issues / TODO
 
-The core is **playable**, but a few things remain to polish (they do not block gameplay):
+The cores are playable/working; the items below are polish and do not block gameplay.
 
+### World Rally
 - **Red shadow glitches in the snow stage (Monte Carlo):**
   - *Roadside beacons*: shown as a solid red bar (on the real PCB / MAME they are imperceptible, barely
     tinting the white snow). It is the shadow-over-tilemap path.
@@ -76,6 +79,20 @@ The core is **playable**, but a few things remain to polish (they do not block g
     "bogus" priority scheme (no golden reference).
 - **Timing:** ~−9.5 ns setup slack on an mc8051 path (cen-paced, not functional); the SDC multicycle
   still needs tuning for a timing-clean build.
+
+### Squash *(beta)*
+- **Boot/check-screen grid** not fully pixel-perfect (rightmost column + a corner connector).
+- **Layer ordering:** the advertising in the scoreboard and the sets-score display (sprite↔tilemap
+  priority) are not yet in the right order.
+- Various minor graphic glitches.
+
+### Thunder Hoop *(beta)*
+- **Boot/check-screen grid** adjustment pending.
+- Various minor graphic glitches.
+
+### Biomechanical Toy *(beta)*
+- **Boot/check-screen grid** adjustment pending.
+- Various minor graphic glitches.
 
 ## Credits
 
@@ -125,18 +142,21 @@ adaptado al timing del DS5002.
 Hay un `.rbf` precompilado en [`releases/`](releases/) — **distribuible**: el firmware del DS5002 se
 carga en *runtime* desde el `.mra`, no va horneado en el bitstream.
 
-### Cores Gaelco Tipo-1 (`gaelco.cpp`): Squash, Thunder Hoop, Biomechanical Toy
-Misma familia de hardware: **MC68000** + vídeo custom Gaelco (2 tilemaps + sprites, 4bpp, xBGR-555) +
-**OKI MSM6295**. **Más simples que World Rally: SIN coprocesador DS5002.** Construidos reutilizando la
-misma infraestructura (fx68k, jt6295, jtframe).
+> Los tres siguientes son la **familia Gaelco Tipo-1** (`gaelco.cpp`): **MC68000** + vídeo custom Gaelco
+> (2 tilemaps + sprites, 4bpp, xBGR-555) + **OKI MSM6295**. **Más simples que World Rally: SIN
+> coprocesador DS5002.** Construidos reutilizando la misma infraestructura (fx68k, jt6295, jtframe).
+> `.rbf` precompilado de cada uno en [`releases/`](releases/); no necesitan el parche del DS5002.
+> **⚠️ Los tres son BETA** (ver Trabajos pendientes).
 
-- **Squash** (Gaelco, 1992) — 68000 @10 MHz, VRAM cifrada. **Estado: jugable en MiSTer.**
-- **Thunder Hoop** (Gaelco, 1992) — 68000 @12 MHz, VRAM cifrada, gfx con de-interleave `[0,2,1,3]`.
-  **Estado: funcionando en MiSTer** (arranque, vídeo, audio).
-- **Biomechanical Toy** (Gaelco, 1994/95) — 68000 @12 MHz, *VRAM plana* (sin cifrado). **Estado:
-  funcionando en MiSTer.**
+### Squash (Gaelco, 1992) — *beta*
+68000 @10 MHz, VRAM cifrada. **Estado: jugable en MiSTer (beta).** `jtsquash_V008.rbf`.
 
-`.rbf` precompilado de cada uno en [`releases/`](releases/). No necesitan el parche del DS5002 (no llevan MCU).
+### Thunder Hoop (Gaelco, 1992) — *beta*
+68000 @12 MHz, VRAM cifrada, gfx con de-interleave `[0,2,1,3]`. **Estado: funcionando en MiSTer (beta)**
+(arranque, vídeo, audio). `jtthoop_V004.rbf`.
+
+### Biomechanical Toy (Gaelco, 1994/95) — *beta*
+68000 @12 MHz, *VRAM plana* (sin cifrado). **Estado: funcionando en MiSTer (beta).** `jtbiomtoy_V001.rbf`.
 
 ## Construir
 
@@ -169,8 +189,9 @@ cores/wrally/
 
 ## Trabajos pendientes
 
-El core es **jugable**, pero quedan cosas por pulir (no bloquean la partida):
+Los cores son jugables/funcionales; lo de abajo es pulido y no bloquea la partida.
 
+### World Rally
 - **Glitches rojos de sombra en la fase de nieve (Monte Carlo):**
   - *Balizas* de la carretera: aparecen como una barra roja sólida (en la placa real / MAME son
     imperceptibles, tiñen apenas la nieve blanca). Es el camino sombra-sobre-tilemap.
@@ -178,6 +199,20 @@ El core es **jugable**, pero quedan cosas por pulir (no bloquean la partida):
     glitch como un esquema de prioridad "bogus" (no hay referencia dorada).
 - **Timing:** ~−9.5 ns de setup slack en un path del mc8051 (cen-paced, no funcional); falta afinar el
   multicycle del SDC para un build timing-limpio.
+
+### Squash *(beta)*
+- **Rejilla de la pantalla de arranque/check** no del todo pixel-perfect (última columna + un conector de esquina).
+- **Orden de capas:** la publicidad del marcador y el display de los sets (prioridad sprite↔tilemap)
+  todavía no salen en el orden correcto.
+- Diversos glitches gráficos menores.
+
+### Thunder Hoop *(beta)*
+- **Rejilla de la pantalla de arranque/check**: ajuste pendiente.
+- Diversos glitches gráficos menores.
+
+### Biomechanical Toy *(beta)*
+- **Rejilla de la pantalla de arranque/check**: ajuste pendiente.
+- Diversos glitches gráficos menores.
 
 ## Créditos
 
