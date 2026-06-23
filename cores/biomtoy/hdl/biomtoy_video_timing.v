@@ -20,14 +20,15 @@ module biomtoy_video_timing #(
     // 2026-06-16: ajustado a pixel clock 8 MHz (clk48/6). HTOTAL=512 -> hsync 15.6 KHz (estandar).
     // VTOTAL=269 -> refresco 8e6/(512*269) = 58.1 Hz. (Antes /7=6.857MHz, HTOTAL=448, VTOTAL=264.)
     parameter HVIS = 320,
-    parameter HFP  = 16,     // front porch
-    parameter HSW  = 32,     // sync width
-    parameter HBP  = 32,     // back porch   (HTOTAL = 320+16+32+32 = 400)
+    // 2026-06-23 FIX CRT 15kHz: HTOTAL=512 (hsync 8e6/512=15.625kHz) + VTOTAL=272 (57.45Hz ~57.42).
+    parameter HFP  = 48,     // front porch
+    parameter HSW  = 48,     // sync width
+    parameter HBP  = 96,     // back porch   (HTOTAL = 320+48+48+96 = 512 -> hsync 15.625 kHz, CRT OK)
     // Vertical (en líneas). VTOTAL = VVIS+VFP+VSW+VBP.
     parameter VVIS = 240,
-    parameter VFP  = 14,
+    parameter VFP  = 8,
     parameter VSW  = 8,
-    parameter VBP  = 86,     // (VTOTAL = 240+14+8+86 = 348 -> 8e6/(400*348)=57.47Hz ~57.42 a CALIBRAR)
+    parameter VBP  = 16,     // (VTOTAL = 240+8+8+16 = 272 -> 8e6/(512*272)=57.45Hz; CRT 15.6kHz)
     parameter SYNC_ACTIVE = 1'b1   // FIX 0x0 (2026-06-16): jtframe_resync espera hs/vs ACTIVO-ALTO
                                    // (mide el pulso por flanco de SUBIDA: hs_edge=hs&!last_hs, hs_len de
                                    // subida->bajada). Con activo-bajo media el periodo ACTIVO como ancho

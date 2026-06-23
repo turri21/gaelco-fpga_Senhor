@@ -16,7 +16,7 @@ module thoop_video_top #(
     parameter integer LAT   = 13,   // latencia hpos->RGB (ce_pix)
     parameter integer DEADJ = 0,    // ajuste fino de fase sync/DE vs RGB
     parameter integer SPN   = 12,   // alineacion del camino de sprite (calibrable; ~LAT-1)
-    parameter integer VTOTAL= 348
+    parameter integer VTOTAL= 272   // 2026-06-23 FIX CRT: VTOTAL=512x272 (debe = el del video_timing)
 )(
     input  wire        clk,
     input  wire        rst,
