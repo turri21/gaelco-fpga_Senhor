@@ -44,7 +44,7 @@ loaded at *runtime* from the `.mra`, it is not baked into the bitstream.
 68000 @12 MHz + **DS5002FP** coprocessor (passive protection). Plain VRAM (no encryption), Rev-B sprite
 format. The DS5002 firmware is **loaded at runtime from the `.mra`** (`JTFRAME_PROM_START`, like World Rally) —
 **no firmware is included in this repo**. **Status: boots and passes the self-test on MiSTer (beta).**
-Build from source (`cores/thoop2/`) with the firmware supplied by the `.mra`.
+Prebuilt `jtthoop2_V004.rbf` in [`releases/`](releases/) (firmware loaded at runtime from the `.mra`), or build from source (`cores/thoop2/`).
 
 ## Build
 
