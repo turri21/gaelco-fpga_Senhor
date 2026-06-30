@@ -48,6 +48,25 @@ Prebuilt `jtthoop2_V005.rbf` in [`releases/`](releases/) (firmware loaded at run
 > ⚠️ The romset **must contain the DS5002 firmware** `thoop2_ds5002fp.bin` (CRC `6881384d`); it is not in the standard MAME set, and without it the coprocessor has no code and the game **freezes a few seconds into play**.
 > (V005 fixes a timing-closure bug present in V004 — the mc8051/DS5002 path was unconstrained, causing **board-dependent freezes during gameplay**.)
 
+### Alligator Hunt (Gaelco, 1994)
+**First Gaelco Type-2 core** (`gaelco2.cpp`, **GAE1** custom chip): **MC68000** + **DS5002FP** coprocessor
++ **OKI MSM6295**. The Type-2 video is new vs the Type-1 family (2 tilemaps + 2 sprite banks with
+shadow/highlight, larger palette).
+
+**Status: playable on MiSTer** — boot, video, audio, DS5002 coprocessor, attract demo and gameplay
+validated on hardware. The DS5002 is implemented with the **mc8051** core (Oregano), like World Rally /
+TH Strikes Back. CRT/analog (15 kHz) timing validated.
+
+The DS5002 firmware is **loaded at runtime from the `.mra`** — **no firmware is included in this repo** and
+**none is baked into the bitstream**. Prebuilt `jtaligator_V016.rbf` in [`releases/`](releases/) —
+**distributable** (DS5002 firmware loaded at runtime from the `.mra`, not baked into the bitstream),
+**validated playable on MiSTer**. Or build from source (`cores/aligator/`) applying **both**
+`tools/patch_dallas_runtime.py` + `tools/patch_scratch_runtime.py` (the first builds the runtime program
+PROM, the second the runtime data SCRATCH of the DS5002 — **both are required** for a distributable `.rbf`
+without the freeze).
+> ⚠️ The romset **must contain the DS5002 firmware** (`aligator_ds5002fp_sram.bin`); without it the
+> coprocessor has no code and the game freezes a few seconds into play.
+
 ## Build
 
 This repo contains **only the core code** (`cores/wrally/`). The framework and third-party cores
@@ -110,6 +129,13 @@ The cores are playable/working; the items below are polish and do not block game
 ### Biomechanical Toy *(beta)*
 - **Boot/check-screen grid** adjustment pending.
 - Various minor graphic glitches.
+
+### Alligator Hunt
+- ✅ **Playable on MiSTer** (validated on hardware): boot, video, audio, DS5002 coprocessor, gameplay.
+- ✅ **CRT/analog timing** validated (`HTOTAL`=512 → ~15.6 kHz hsync, `VTOTAL`=264 → ~59.2 Hz).
+- DS5002 firmware loaded at runtime from the `.mra` (no firmware in this repo, none baked in the bitstream).
+- Prebuilt `jtaligator_V016.rbf` in [`releases/`](releases/) — distributable, validated playable on MiSTer.
+  Build from source needs **both** `tools/patch_dallas_runtime.py` (runtime program PROM) + `tools/patch_scratch_runtime.py` (runtime data SCRATCH).
 
 ## Credits
 
@@ -178,6 +204,25 @@ carga en *runtime* desde el `.mra`, no va horneado en el bitstream.
 ### Biomechanical Toy (Gaelco, 1994/95) — *beta*
 68000 @12 MHz, *VRAM plana* (sin cifrado). **Estado: funcionando en MiSTer (beta).** `jtbiomtoy_V002.rbf`.
 
+### Alligator Hunt (Gaelco, 1994)
+**Primer core Gaelco Tipo-2** (`gaelco2.cpp`, chip custom **GAE1**): **MC68000** + coprocesador
+**DS5002FP** + **OKI MSM6295**. El vídeo Tipo-2 es nuevo respecto a la familia Tipo-1 (2 tilemaps + 2
+bancos de sprites con sombras/highlights, paleta mayor).
+
+**Estado: jugable en MiSTer** — arranque, vídeo, audio, coprocesador DS5002, demo de atracción y partida
+validados en hardware. El DS5002 se implementa con el core **mc8051** (Oregano), como World Rally /
+TH Strikes Back. Timing CRT/analógico (15 kHz) validado.
+
+El firmware del DS5002 se **carga en runtime desde el `.mra`** — **no se incluye firmware en este repo** y
+**no va horneado en el bitstream**. `.rbf` precompilado `jtaligator_V016.rbf` en [`releases/`](releases/) —
+**distribuible** (firmware del DS5002 cargado en runtime desde el `.mra`, no horneado en el bitstream),
+**validado jugable en MiSTer**. O compilar desde fuente (`cores/aligator/`) aplicando **los dos**
+`tools/patch_dallas_runtime.py` + `tools/patch_scratch_runtime.py` (el primero hace el PROM del programa en
+runtime, el segundo el SCRATCH de datos en runtime del DS5002 — **ambos imprescindibles** para un `.rbf`
+distribuible sin el freeze).
+> ⚠️ El romset **debe contener el firmware del DS5002** (`aligator_ds5002fp_sram.bin`); sin él el
+> coprocesador no tiene código y el juego se congela a los pocos segundos de partida.
+
 ## Construir
 
 Este repo contiene **solo el código del core** (`cores/wrally/`). El framework y los cores de
@@ -233,6 +278,13 @@ Los cores son jugables/funcionales; lo de abajo es pulido y no bloquea la partid
 ### Biomechanical Toy *(beta)*
 - **Rejilla de la pantalla de arranque/check**: ajuste pendiente.
 - Diversos glitches gráficos menores.
+
+### Alligator Hunt
+- ✅ **Jugable en MiSTer** (validado en hardware): arranque, vídeo, audio, coprocesador DS5002, partida.
+- ✅ **Timing CRT/analógico** validado (`HTOTAL`=512 → hsync ~15,6 kHz, `VTOTAL`=264 → ~59,2 Hz).
+- Firmware del DS5002 cargado en runtime desde el `.mra` (sin firmware en el repo, sin hornear en el bitstream).
+- `.rbf` precompilado `jtaligator_V016.rbf` en [`releases/`](releases/) — distribuible, validado jugable en MiSTer.
+  Compilar desde fuente requiere **los dos** `tools/patch_dallas_runtime.py` (PROM del programa en runtime) + `tools/patch_scratch_runtime.py` (SCRATCH de datos en runtime).
 
 ## Créditos
 
