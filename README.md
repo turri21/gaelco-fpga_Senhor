@@ -67,6 +67,27 @@ without the freeze).
 > ⚠️ The romset **must contain the DS5002 firmware** (`aligator_ds5002fp_sram.bin`); without it the
 > coprocessor has no code and the game freezes a few seconds into play.
 
+### World Rally 2: Twin Racing (Gaelco, 1995)
+**Type-2 core** (`gaelco2.cpp`, **GAE1** custom chip): **MC68000** + **DS5002FP** coprocessor, running at
+**13 MHz**. Two-player **dual-monitor** racing cabinet: the single GAE1 feeds two side-by-side screens,
+5 bpp tilemaps, analog wheels (ADC) and GAE1 stereo sound (samples in the gfx ROMs — no OKI).
+
+**Status: playable on MiSTer** — boot, video, audio, DS5002 coprocessor and gameplay validated on
+hardware. The DS5002 is implemented with the **mc8051** core (Oregano). The CPU/MCU run at a faithful
+**13/13 MHz** (fractional cen). The OSD **"Monitor"** option selects **Left / Right / Twin**: single
+monitors are 384×240 (4:3); **Twin** is 768 wide (two 4:3 monitors) shown at **8:3 automatically**.
+Default is **Left** (single, 4:3) so it is playable from boot on a normal monitor/CRT.
+
+The DS5002 firmware is **loaded at runtime from the `.mra`** — **no firmware is included in this repo** and
+**none is baked into the bitstream**. Prebuilt `jtwrally2_V010.rbf` in [`releases/`](releases/) —
+**distributable**, **validated playable on MiSTer**. To build from source (`cores/wrally2/`) apply
+`tools/patch_twin_arx.py` (automatic 8:3 aspect in Twin) and compile with `WR2_CEN_FRAC=1` (13/13 MHz) —
+see [`BUILD.md`](BUILD.md). Unlike World Rally / Alligator, **no DS5002 address patch is needed** (the core
+is `SDRAM_LARGE`, so the firmware loads at runtime from the `.mra` without patching).
+> ⚠️ The romset **must contain the DS5002 firmware** (`wrally2_ds5002fp_sram.bin`); without it the
+> coprocessor has no code and the game does not boot.
+> 🖥️ **Do not ship a `config/wrally2.CFG`**: the factory default (no CFG) boots Left / Original / Normal.
+
 ## Build
 
 This repo contains **only the core code** (`cores/wrally/`). The framework and third-party cores
@@ -136,6 +157,14 @@ The cores are playable/working; the items below are polish and do not block game
 - DS5002 firmware loaded at runtime from the `.mra` (no firmware in this repo, none baked in the bitstream).
 - Prebuilt `jtaligator_V016.rbf` in [`releases/`](releases/) — distributable, validated playable on MiSTer.
   Build from source needs **both** `tools/patch_dallas_runtime.py` (runtime program PROM) + `tools/patch_scratch_runtime.py` (runtime data SCRATCH).
+
+### World Rally 2
+- ✅ **Playable on MiSTer** (validated on hardware): boot, video, audio, DS5002 coprocessor, gameplay.
+- ✅ **Dual-monitor**: OSD "Monitor" = Left / Right / Twin; Twin (768) shows at **8:3 automatically**. Default = Left (single 4:3).
+- ✅ CPU/MCU at faithful **13/13 MHz** (fractional cen, `WR2_CEN_FRAC`).
+- DS5002 firmware loaded at runtime from the `.mra` (no firmware in this repo, none baked in the bitstream).
+- Prebuilt `jtwrally2_V010.rbf` in [`releases/`](releases/) — distributable, validated playable on MiSTer.
+- ⚠️ Minor known cosmetic issue: in the cliff area a few grass sprites draw over the rocks (sprite priority vs MAME); does not affect gameplay.
 
 ## Credits
 
@@ -222,6 +251,28 @@ runtime, el segundo el SCRATCH de datos en runtime del DS5002 — **ambos impres
 distribuible sin el freeze).
 > ⚠️ El romset **debe contener el firmware del DS5002** (`aligator_ds5002fp_sram.bin`); sin él el
 > coprocesador no tiene código y el juego se congela a los pocos segundos de partida.
+
+### World Rally 2: Twin Racing (Gaelco, 1995)
+**Core Tipo-2** (`gaelco2.cpp`, chip custom **GAE1**): **MC68000** + coprocesador **DS5002FP** a **13 MHz**.
+Recreativa de carreras de 2 jugadores con **doble monitor**: un único GAE1 alimenta dos pantallas lado a
+lado, tilemaps de 5 bpp, volantes analógicos (ADC) y sonido estéreo del GAE1 (samples en las ROMs de gfx —
+sin OKI).
+
+**Estado: jugable en MiSTer** — arranque, vídeo, audio, coprocesador DS5002 y partida validados en
+hardware. El DS5002 se implementa con el core **mc8051** (Oregano). CPU/MCU a **13/13 MHz** fiel (cen
+fraccional). La opción de OSD **"Monitor"** elige **Left / Right / Twin**: los monitores individuales son
+384×240 (4:3); **Twin** son 768 de ancho (dos monitores 4:3) mostrados a **8:3 automáticamente**. Por
+defecto arranca en **Left** (individual 4:3) para que sea jugable desde el arranque en un monitor/CRT normal.
+
+El firmware del DS5002 se **carga en runtime desde el `.mra`** — **no se incluye firmware en este repo** y
+**no va horneado en el bitstream**. `.rbf` precompilado `jtwrally2_V010.rbf` en [`releases/`](releases/) —
+**distribuible**, **validado jugable en MiSTer**. Para compilar desde fuente (`cores/wrally2/`) aplica
+`tools/patch_twin_arx.py` (8:3 automático en Twin) y compila con `WR2_CEN_FRAC=1` (13/13 MHz) — ver
+[`BUILD.md`](BUILD.md). A diferencia de World Rally / Alligator, **no hace falta parche de dirección del
+DS5002** (el core es `SDRAM_LARGE`, así que el firmware carga en runtime desde el `.mra` sin parchear).
+> ⚠️ El romset **debe contener el firmware del DS5002** (`wrally2_ds5002fp_sram.bin`); sin él el
+> coprocesador no tiene código y el juego no arranca.
+> 🖥️ **No distribuir un `config/wrally2.CFG`**: el default de fábrica (sin CFG) arranca en Left / Original / Normal.
 
 ## Construir
 
