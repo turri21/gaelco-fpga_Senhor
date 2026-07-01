@@ -91,6 +91,21 @@ is `SDRAM_LARGE`, so the firmware loads at runtime from the `.mra` without patch
 > coprocessor has no code and the game does not boot.
 > 🖥️ **Do not ship a `config/wrally2.CFG`**: the factory default (no CFG) boots Left / Original / Normal.
 
+### Big Karnak (Gaelco, 1991)
+The **earliest Gaelco** in this collection and the **simplest** (board REF.901112-1, **Unprotected — no
+DS5002FP**, plain unencrypted VRAM). **68000 @12 MHz** with a dedicated **sound CPU**: **MC6809E** +
+**YM3812 (OPL2)** + **OKI MSM6295**. The Type-1 video is the squash/thoop family (4 tilemap planes +
+sprites, 4-quadrant gfx).
+
+**Status: playable on MiSTer** — boot, video and audio validated on hardware. Video is **pixel-perfect vs
+MAME** (0.00% across all test scenes); CRT/analog timing runs at **58.74 Hz**. Because the board is
+unprotected there is **no coprocessor firmware** — the core needs only `bigkarnk.zip`.
+
+Prebuilt `bigkarnk_20260701.rbf` in [`releases/`](releases/) — **distributable**, or build from source
+(`cores/bigkarnk/`); no address patch and no firmware are required.
+> ℹ️ Naming: the `.rbf` is `bigkarnk_YYYYMMDD.rbf` (**no `jt` prefix** — this core is not jotego's; the
+> `jt` prefix is reserved for his own cores). Internal JTFRAME module names keep `jt`.
+
 ## Build
 
 This repo contains **only the core code** (`cores/wrally/`). The framework and third-party cores
@@ -279,6 +294,21 @@ DS5002** (el core es `SDRAM_LARGE`, así que el firmware carga en runtime desde 
 > ⚠️ El romset **debe contener el firmware del DS5002** (`wrally2_ds5002fp_sram.bin`); sin él el
 > coprocesador no tiene código y el juego no arranca.
 > 🖥️ **No distribuir un `config/wrally2.CFG`**: el default de fábrica (sin CFG) arranca en Left / Original / Normal.
+
+### Big Karnak (Gaelco, 1991)
+El **Gaelco más antiguo** de esta colección y el **más sencillo** (placa REF.901112-1, **sin protección —
+sin DS5002FP**, VRAM plana sin cifrar). **68000 @12 MHz** con **CPU de sonido dedicada**: **MC6809E** +
+**YM3812 (OPL2)** + **OKI MSM6295**. El vídeo Tipo-1 es de la familia squash/thoop (4 planos de tilemap +
+sprites, gfx en 4 cuadrantes).
+
+**Estado: jugable en MiSTer** — arranque, vídeo y audio validados en hardware. El vídeo es **pixel-perfect
+vs MAME** (0.00% en todas las escenas de prueba); el timing CRT/analógico va a **58.74 Hz**. Al ser una
+placa sin protección **no hay firmware de coprocesador** — el core solo necesita `bigkarnk.zip`.
+
+`.rbf` precompilado `bigkarnk_20260701.rbf` en [`releases/`](releases/) — **distribuible**, o compilar
+desde fuente (`cores/bigkarnk/`); no hace falta ningún parche de dirección ni firmware.
+> ℹ️ Nomenclatura: el `.rbf` es `bigkarnk_YYYYMMDD.rbf` (**sin prefijo `jt`** — este core no es de jotego;
+> el prefijo `jt` se reserva para sus propios cores). Los módulos internos de JTFRAME conservan `jt`.
 
 ## Construir
 
