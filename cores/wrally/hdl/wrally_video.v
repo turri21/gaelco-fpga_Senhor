@@ -123,6 +123,16 @@ module wrally_video (
         tidx_pre <= {1'b0, tidx};      // 1 ciclo antes de r/g/b (r va +2 desde tidx) -> listo en palb_a
     end
 
+`ifdef BAR_TMDBG
+    // Traza la decodificación de tilemap en la banda de la BARRA ROJA fantasma (6859): hpos 285..296,
+    // vpos 148..152. Muestra ambas capas (code via vram, pen/color/prio) + tidx compuesto.
+    always @(posedge clk) if (ce) begin
+        if (vpos>=9'd129 && vpos<=9'd179 && tidx==9'h11e)  // 0x11e = índice ROJO (color17,pen14)
+            $display("BARRED vpos=%0d hpos=%0d | pen1=%h col1=%h pr1=%b vram_q1=%h gfx_ok1=%b | pen0=%h col0=%h pr0=%b | tidx=%h",
+                     vpos, hpos, pen1, color1, prio1, vram_q1, gfx_ok1, pen0, color0, prio0, tidx);
+    end
+`endif
+
 `ifdef SIMULATION
     // VIDDBG: ¿produce pixeles cada capa? cuenta pen!=0 de L0 (frente) y L1 (fondo) +
     // muestrea codigos/colores. Si pen1 (fondo) ~0 -> el tilemap de fondo no compone

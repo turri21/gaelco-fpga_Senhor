@@ -68,6 +68,14 @@ module wrally_sprite_layer #(
         .lb_x(hpos), .lb_q(lb_q), .lb_high(lb_high),
         .wbank(wbank), .rbank(rbank)
     );
+
+`ifdef SPR_BARDBG
+    // READ-side: cada display line, ¿qué lee el mezclador en x=289..294? (vpos aquí es la línea mostrada)
+    always @(posedge clk) if (ce_pix) begin
+        if (hpos==10'd291 && lb_q[3:0]!=4'd0)
+            $display("READ vpos=%0d hpos=%0d rbank=%b lb_q=%h", vpos, hpos, rbank, lb_q);
+    end
+`endif
 endmodule
 
 `default_nettype wire

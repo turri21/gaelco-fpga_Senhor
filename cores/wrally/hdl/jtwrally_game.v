@@ -33,12 +33,14 @@ module jtwrally_game(
     // -> muestreo de los slots (clk) desde clk48 es seguro (mesocrono).
     wire clkg = clk48;   // reloj de la logica del juego
 
-    // pxl_cen/pxl2_cen GENERADOS A MANO. FIX 0x0 (2026-06-16): pasamos de /7 (6.857MHz, IMPAR)
-    // a **/6 = 8 MHz (PAR)**. Con /7 el pxl2_cen/pxl1_cen quedaba mal espaciado (fases 0 y 3 de 7,
-    // no la mitad exacta) -> el scan-doubler del scaler de MiSTer media mal -> resolucion 0x0.
-    // Con /6, pxl_cen=fase0 y pxl1_cen(=pxl2_cen&~pxl_cen)=fase3 = la MITAD EXACTA -> spacing limpio
-    // = lo que el scaler necesita. clk48/6 = clk96/12 = IDENTICO al pxl_cen de JTFRAME_PXLCLK=8,
-    // pero sin forzar todo a clk96 (fx68k sigue relajado a clk48). pxl2_cen = clk48/3 = 16MHz (2x).
+    // pxl_cen/pxl2_cen GENERADOS A MANO. FIX 0x0 (2026-06-16): /7(IMPAR) -> /6=8MHz(PAR) por spacing
+    // limpio del pxl2_cen/pxl1_cen que el scaler necesita (pxl1_cen=pxl2_cen&~pxl_cen debe ser la MITAD
+    // EXACTA del periodo de pixel, o el scan-doubler mide mal -> resolucion 0x0).
+    // 🆕 2026-07-01 (rev2): VUELTA a **/6 = 8 MHz** (clk48/6). El /8=6MHz para exact-60.000 (400x250)
+    // forzaba blanking JUSTO (HTOTAL=400, sólo 32px de blank) -> back-porch corto -> FLICKER en el borde
+    // izquierdo (validado en HW). A 8MHz/512 hay blanking cómodo (144px) = SIN flicker (régimen de V.071).
+    // Se pierde el 60.000 exacto (queda 59.98Hz con HTOTAL=513) pero es imperceptible y más fiel al scan
+    // rate real (15.6KHz). pxl_cen=fase0, pxl2_cen=fase0+3 (mitad exacta de 6) -> spacing PAR para el scaler.
     reg [2:0] pxdiv = 3'd0;
     always @(posedge clkg) pxdiv <= (pxdiv==3'd5) ? 3'd0 : pxdiv + 3'd1;
     assign pxl_cen  = (pxdiv==3'd0);
@@ -51,11 +53,18 @@ module jtwrally_game(
     reg [1:0] cdiv = 2'd0;
     reg [5:0] odiv = 6'd0;
     reg cpu_cen_phi1 = 1'b0, cpu_cen_phi2 = 1'b0, mcu_cen = 1'b0, oki_cen = 1'b0;
+    // PAUSA: dip_pause (jtframe, 1=corre/0=pausa). WR_TESTPAUSE = forzar pausa (test de sim).
+`ifdef WR_TESTPAUSE
+    wire dip_pause_g = 1'b0;
+`else
+    wire dip_pause_g = dip_pause;
+`endif
     always @(posedge clkg) begin
         cdiv         <= (cdiv==2'd3) ? 2'd0 : cdiv + 2'd1;
         cpu_cen_phi1 <= (cdiv==2'd0);
         cpu_cen_phi2 <= (cdiv==2'd2);
-        mcu_cen      <= (cdiv==2'd0);
+        // congela el DS5002 a la vez que el 68k (game_run en wrally_main) -> handshake coherente; vídeo sigue.
+        mcu_cen      <= (cdiv==2'd0) & dip_pause_g;
         odiv         <= (odiv==6'd47) ? 6'd0 : odiv + 6'd1;
         oki_cen      <= (odiv==6'd0);
     end
@@ -144,7 +153,7 @@ module jtwrally_game(
                                 // pleno; el timing a clk48 cierra si quitamos el multicycle del r8051 del SDC.
 `endif
     wrally_main #(.MCU_FULLSPEED(MCU_FS), .MCU_STUB(1'b0)) u_cpu (
-        .clk(clkg), .rst(cpu_rst),
+        .clk(clkg), .rst(cpu_rst), .game_run(dip_pause_g),
         .cpu_cen_phi1(cpu_cen_phi1), .cpu_cen_phi2(cpu_cen_phi2),
         .mcu_cen(mcu_cen), .oki_cen(oki_cen),
         .vblank_irq(vblank_irq),
@@ -567,7 +576,8 @@ module jtwrally_game(
         // [10:12]reset SP (SDRAM) [13:15]reset PC (SDRAM, =dato entrada clave) [16:18]1er fetch
     // P6 = DIAGNOSTICO INPUTS (V.066): sticky "visto pulsado" + in_p1p2 acumulado
     wire [223:0] tl_pl6 = { 176'd0, p1p2_anylow[15:0], {2'd0,seen_joy1[5:0]},
-                            {4'd0,seen_cab[3:0]}, {4'd0,seen_coin[3:0]}, {6'd0,seen_test,seen_serv} };
+                            {4'd0,seen_cab[3:0]}, {4'd0,seen_coin[3:0]}, {5'd0,dip_pause,seen_test,seen_serv} };
+        // byte0 [0]=service [1]=test [2]=dip_pause (1=corre/0=pausa: si al pulsar Pause baja a 0, la cadena VA)
         // [0]={b1:test,b0:service}  [1]=coin[3:0]  [2]=cab/start[3:0]  [3]=joy1[5:0](RLDU+B1B2)
         // [4:5]=in_p1p2 acumulado (bit=0 si ese boton llego al puerto del 68k)
     reg [223:0] tl_payload;

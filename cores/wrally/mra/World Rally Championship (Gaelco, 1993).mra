@@ -27,9 +27,9 @@
        0x300000  OKI samples 1MB (worldr14, worldr15)                                      -> ba2 (DW8)
 -->
 <misterromdescription>
-    <name>World Rally (Gaelco, V.068)</name>
+    <name>World Rally Championship (Gaelco, 1993)</name>
     <setname>wrally</setname>
-    <rbf>wrally</rbf>
+    <rbf>wrally_20260701</rbf>
     <mameversion>0288</mameversion>
     <year>1993</year>
     <manufacturer>Gaelco</manufacturer>
@@ -79,5 +79,6 @@
         <dip name="Free Play"      bits="15"   ids="On,Off"/>
     </switches>
 
-    <buttons names="Accel,Gear,Start,Coin" default="A,B,Start,Select" count="2"/>
+    <!-- Pause con tecla propia (Y); requiere .rbf con el fix de pausa (dip_pause). El .rbf viejo lo ignora. -->
+    <buttons names="Accel,Gear,Start,Coin,Pause" default="A,B,Start,Select,Y" count="2"/>
 </misterromdescription>

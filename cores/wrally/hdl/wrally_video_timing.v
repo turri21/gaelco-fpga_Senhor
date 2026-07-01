@@ -19,15 +19,19 @@ module wrally_video_timing #(
     // Horizontal (en píxeles). HTOTAL = HVIS+HFP+HSW+HBP.
     // 2026-06-16: ajustado a pixel clock 8 MHz (clk48/6). HTOTAL=512 -> hsync 15.6 KHz (estandar).
     // VTOTAL=269 -> refresco 8e6/(512*269) = 58.1 Hz. (Antes /7=6.857MHz, HTOTAL=448, VTOTAL=264.)
+    // 🆕 2026-07-01 (rev2): VUELTA a pixel-clk 8 MHz (clk48/6), HTOTAL=513, VTOTAL=260 -> 8e6/(513*260)=
+    // **59.98 Hz** (~60), hsync 15.6 KHz. El 6MHz/400/250 (60.000 exacto) forzaba blanking JUSTO (32px) ->
+    // back-porch corto -> FLICKER en borde izq (HW). A 8MHz hay blanking CÓMODO (145px) = sin flicker
+    // (régimen probado de V.071). 59.98 vs 60.000 = imperceptible; el "60.000000" de MAME es nominal.
     parameter HVIS = 368,
     parameter HFP  = 24,     // front porch
     parameter HSW  = 48,     // sync width
-    parameter HBP  = 72,     // back porch   (HTOTAL = 368+24+48+72 = 512)
+    parameter HBP  = 73,     // back porch   (HTOTAL = 368+24+48+73 = 513 -> 59.98 Hz; blanking cómodo)
     // Vertical (en líneas). VTOTAL = VVIS+VFP+VSW+VBP.
     parameter VVIS = 232,
     parameter VFP  = 10,
     parameter VSW  = 8,
-    parameter VBP  = 10,     // (VTOTAL = 232+10+8+10 = 260 -> 60.10 Hz; antes 19 -> 58.1 Hz, 2026-06-25)
+    parameter VBP  = 10,     // (VTOTAL = 232+10+8+10 = 260 -> 59.98 Hz)
     parameter SYNC_ACTIVE = 1'b1   // FIX 0x0 (2026-06-16): jtframe_resync espera hs/vs ACTIVO-ALTO
                                    // (mide el pulso por flanco de SUBIDA: hs_edge=hs&!last_hs, hs_len de
                                    // subida->bajada). Con activo-bajo media el periodo ACTIVO como ancho
@@ -79,8 +83,11 @@ module wrally_video_timing #(
                 hcnt <= hcnt + 1'b1;
             end
 
-            // blanks (área NO visible)
-            hblank <= (hcnt >= HVIS-1) ? 1'b1 : 1'b0;   // -1 por el registro de salida
+            // blanks (área NO visible). FIX BORDE DCHO (2026-06-27, = aligator V014 / wrally2): el hblank
+            // es REGISTRADO -> abre la ventana 1 ciclo tarde; con de=(hcnt<=HVIS) (abajo) la última columna
+            // (HVIS-1) se muestra correcta (el RGB lleva 1px de retardo de pipeline). Antes: hblank>=HVIS-1 +
+            // WIDTH=367 perdían 1px; ahora hblank>=HVIS + WIDTH=368 = resolución real de MAME (368×232).
+            hblank <= (hcnt >= HVIS)   ? 1'b1 : 1'b0;
             vblank <= (vcnt >= VVIS)   ? 1'b1 : 1'b0;
 
             // sync (tras el front porch, durante SW)
@@ -94,7 +101,9 @@ module wrally_video_timing #(
 
     assign hpos = hcnt;     // válido en 0..HVIS-1 (de=1)
     assign vpos = vcnt[8:0];
-    assign de   = (hcnt < HVIS) && (vcnt < VVIS);
+    // de EXTENDIDO 1px a la dcha (hcnt<=HVIS): compensa el hblank registrado (1 ciclo tarde) + el retardo
+    // de 1px del RGB -> recupera la columna HVIS-1 (antes salía negra con hcnt<HVIS). Resol. real 368.
+    assign de   = (hcnt <= HVIS) && (vcnt < VVIS);
 
 endmodule
 

@@ -7,8 +7,9 @@
 CORENAME=JTWRALLY
 GAMETOP=jtwrally_game_sdram
 
-# Pantalla: 368x232, ROT0 horizontal, xBRG_444 = 4 bits/canal
-JTFRAME_WIDTH=367
+# Pantalla: 368x232, ROT0 horizontal, xBRG_444 = 4 bits/canal. WIDTH=368 = resolución real de MAME
+# (wrally.cpp). El 1px que faltaba se recuperó con el fix de=(hcnt<=HVIS) en wrally_video_timing.v (2026-06-27).
+JTFRAME_WIDTH=368
 JTFRAME_HEIGHT=232
 JTFRAME_COLORW=4
 
@@ -16,7 +17,9 @@ JTFRAME_COLORW=4
 # pxl_cen/pxl2_cen son SALIDAS del game y los generamos nosotros (clk/7 = 6.857MHz,
 # el rate verificado) en hdl/jtwrally_game.v.
 
-# Botones: Accel, Gear (2)
+# Botones: Accel, Gear. BUTTONS=2 (layout nativo del juego). El intento de BUTTONS=3 (Button3 dummy
+# para empujar PAUSE_BIT=9 como aligator) NO funcionó: no daba pausa y ADEMÁS cambiaba el comportamiento
+# de los botones respecto a cómo se configuraban en el OSD -> revertido a 2 (decisión usuario 2026-06-25).
 JTFRAME_BUTTONS=2
 
 # Reloj: game a 48MHz (clk=clk48), SDRAM a 96MHz (JTFRAME_SDRAM96) = camino HW-probado

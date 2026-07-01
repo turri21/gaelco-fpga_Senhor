@@ -17,10 +17,14 @@
 `default_nettype none
 
 module wrally_video_top #(
-    parameter integer DEADJ = 1,  // fase DE/sync vs RGB (ce). ÓPTIMO=+1 (barrido 2026-06-11:
-                                  // -1:83472 0:58712 +1:3460 +2:63670 +3:86875 diffs)
-    parameter integer SPADJ = 1   // fase SPRITE vs TILEMAP (ce). ÓPTIMO=+1: con DEADJ=1 el barrido
-                                  // -1:6015 0:3460 +1:0 -> PIXEL-EXACTO. El sprite iba 1 ce adelantado.
+    parameter integer DEADJ = 0,  // fase DE/sync vs RGB (ce). ÓPTIMO=0 (2026-07-01, re-barrido contra
+                                  // SNAPSHOT REAL DE MAME de frames exactos -oracle definitivo, no golden-):
+                                  // DEADJ=0 -> SIM(frame 240 título)==MAME 0 DIFF pixel-perfect + nieve sin
+                                  // shift. El barrido viejo (2026-06-11: +1:3460) usaba un golden que aún NO
+                                  // era MAME-exacto -> eligió +1, dejando 1px de shift UNIFORME vs MAME (=el
+                                  // "público recortado por la dcha": la col dcha de cada sprite caía sobre tilemap).
+    parameter integer SPADJ = 1   // fase SPRITE vs TILEMAP (ce). ÓPTIMO=+1 (relativo a DEADJ; el shift de
+                                  // DEADJ es UNIFORME y NO cambia el skew sprite-vs-tilemap). Sprite iba 1 ce adelantado.
 )(
     input  wire        clk,
     input  wire        clk96,    // reloj SDRAM (2x clk): el MOTOR de sprites corre aqui para tener
@@ -92,7 +96,9 @@ module wrally_video_top #(
     // esquema de lectura de 3 ciclos -> sprites basura). El presupuesto/scanline (3072 clk48)
     // basta gracias al EARLY-OUT de la FSM (sprites fuera de linea saltan lecturas w2/w3).
     // La lectura del line-buffer (lb_q por hpos) es async -> el display sigue alineado a clk/ce_pix.
-    wrally_sprite_layer u_spr (
+    // VVIS/VTOTAL DEBEN casar con wrally_video_timing (232/250 desde 2026-07-01, antes 232/260 y el default
+    // 264 del módulo NO casaba -> la línea 0 se renderizaba en el wrap con line equivocada; ahora correcto).
+    wrally_sprite_layer #(.VVIS(232), .VTOTAL(250)) u_spr (
         .clk(clk), .rst(rst), .ce_pix(ce_pix), .vpos(vpos), .hpos(hpos),
         .spr_a(spr_a), .spr_q(spr_q),
         .rom_a(srom_a), .d_i07(sd_i07), .d_i09(sd_i09), .d_i11(sd_i11), .d_i13(sd_i13),

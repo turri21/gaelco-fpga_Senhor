@@ -140,14 +140,18 @@ cores/wrally/
 The cores are playable/working; the items below are polish and do not block gameplay.
 
 ### World Rally
-- ✅ **Refresh rate:** adjusted to ~**60.1 Hz** (`VBP` 19→10, `VTOTAL`=260), closer to the original board.
-- **Red shadow glitches in the snow stage (Monte Carlo):**
-  - *Roadside beacons*: shown as a solid red bar (on the real PCB / MAME they are imperceptible, barely
-    tinting the white snow). It is the shadow-over-tilemap path.
-  - *Start arch*: red glitches on the right, only in gameplay. MAME itself documents this glitch as a
-    "bogus" priority scheme (no golden reference).
-- **Timing:** ~−9.5 ns setup slack on an mc8051 path (cen-paced, not functional); the SDC multicycle
-  still needs tuning for a timing-clean build.
+- ✅ **Playable on MiSTer** (validated on hardware): boot, video, audio, DS5002 coprocessor, gameplay.
+- ✅ **Snow stage (Monte Carlo) glitches — FIXED:** the red bar and the "clipped spectators" were the
+  **same tilemap bug** — the gfx prefetch used a single half-buffer pair, so with **flip-X** tiles the next
+  tile overwrote the current one before it was consumed (neighbouring-tile pens → red / wrong pixels).
+  Fixed with a **per-tile-parity double buffer** in `wrally_tilemap.v`. Verified **0-diff vs real MAME**
+  on the affected frames.
+- ✅ **Refresh/geometry:** **59.98 Hz** (8 MHz pixel clock, `HTOTAL`=513 → 15.6 kHz hsync), `368×232`
+  (MAME native), 1-pixel display offset corrected.
+- ✅ **Timing:** setup slack **+0.47 ns** — the cen-paced mc8051 wrapper/IRAM → DS5002 PROM paths are now
+  covered by a `*u_mcu*` multicycle in `syn/wrally_clk48_96.sdc` (previously unconstrained → false −10 ns).
+- DS5002 firmware loaded at runtime from the `.mra` (no firmware in this repo, none baked in the bitstream).
+- Prebuilt `wrally_20260701.rbf` in [`releases/`](releases/) — distributable, validated playable on MiSTer.
 
 ### Squash *(beta)*
 - **Boot/check-screen grid** not fully pixel-perfect (rightmost column + a corner connector).
@@ -344,13 +348,18 @@ cores/wrally/
 Los cores son jugables/funcionales; lo de abajo es pulido y no bloquea la partida.
 
 ### World Rally
-- **Glitches rojos de sombra en la fase de nieve (Monte Carlo):**
-  - *Balizas* de la carretera: aparecen como una barra roja sólida (en la placa real / MAME son
-    imperceptibles, tiñen apenas la nieve blanca). Es el camino sombra-sobre-tilemap.
-  - *Arco de salida*: glitches rojos a la derecha, solo en partida. El propio MAME documenta este
-    glitch como un esquema de prioridad "bogus" (no hay referencia dorada).
-- **Timing:** ~−9.5 ns de setup slack en un path del mc8051 (cen-paced, no funcional); falta afinar el
-  multicycle del SDC para un build timing-limpio.
+- ✅ **Jugable en MiSTer** (validado en hardware): arranque, vídeo, audio, coprocesador DS5002, partida.
+- ✅ **Glitches de la fase de nieve (Monte Carlo) — ARREGLADOS:** la barra roja y los "espectadores
+  recortados" eran **el mismo bug del tilemap** — el prefetch de gfx usaba un solo par de half-buffers, y
+  con tiles **flip-X** el tile siguiente pisaba el actual antes de consumirse (pens del tile vecino → rojo /
+  píxeles mal). Resuelto con un **doble-buffer por paridad de tile** en `wrally_tilemap.v`. Verificado
+  **0-diff vs MAME real** en los frames afectados.
+- ✅ **Refresco/geometría:** **59.98 Hz** (pixel clock 8 MHz, `HTOTAL`=513 → 15.6 kHz hsync), `368×232`
+  (nativo de MAME), corregido el desplazamiento de 1 píxel.
+- ✅ **Timing:** setup slack **+0.47 ns** — los paths cen-paced del wrapper/IRAM del mc8051 → PROM del DS5002
+  ya van cubiertos por un multicycle `*u_mcu*` en `syn/wrally_clk48_96.sdc` (antes sin constrain → falso −10 ns).
+- Firmware DS5002 cargado en runtime desde la `.mra` (sin firmware en el repo, nada horneado en el bitstream).
+- `.rbf` precompilado `wrally_20260701.rbf` en [`releases/`](releases/) — distribuible, validado jugable en MiSTer.
 
 ### Squash *(beta)*
 - **Rejilla de la pantalla de arranque/check** no del todo pixel-perfect (última columna + un conector de esquina).

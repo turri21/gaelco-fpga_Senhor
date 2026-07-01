@@ -190,6 +190,62 @@ module wrally_sprite_engine (
     initial begin state=IDLE; busy=0; done=0; spr_idx=3; px=0; clr_i=0; wbank_r=0; high_r=0; shad_r=0;
         for (k=0;k<368;k=k+1) begin lb0[k]=0; lb1[k]=0; lb0h[k]=0; lb1h[k]=0; end end
     // synthesis translate_on
+
+`ifdef SPR_OVDBG
+    // DIAG OVERRUN: cuenta líneas que desbordan el presupuesto (start llega con el motor ocupado ->
+    // la línea anterior se ABORTA truncada = sprites de alto índice perdidos). Reporta por línea el
+    // idx alcanzado (cuántos sprites procesados) y si terminó (DON) o se truncó.
+    integer n_over=0, n_line=0, cyc=0, idx_at_start=0, n_online_done=0;
+    reg [8:0] last_line=0;
+    always @(posedge clk) if (ce) begin
+        cyc <= cyc + 1;
+        if (start) begin
+            n_line <= n_line + 1;
+            if (state!=IDLE && state!=DON) begin
+                n_over <= n_over + 1;
+                // truncada: la línea que se estaba renderizando (line_r) no llegó a DON
+                $display("OVR linea=%0d TRUNCADA en spr_idx=%0d (proc %0d sprites) state=%0d cyc=%0d",
+                         line_r, spr_idx, (spr_idx-3)/4, state, cyc);
+            end
+            idx_at_start <= spr_idx;
+        end
+        if (state==DON) $display("DONE linea=%0d spr_idx_final=%0d (proc %0d) cyc=%0d",
+                                 line_r, spr_idx, (spr_idx-3)/4, cyc);
+        // resumen cada ~frame
+        if (start && line==9'd0) $display("=== SPR_OVDBG resumen: lineas=%0d overruns=%0d ===", n_line, n_over);
+    end
+`endif
+
+`ifdef SPR_BARDBG
+    // DIAG "barra roja fantasma" (6859): loguea CADA escritura de sprite cuya lb_wa cae en la banda
+    // x=[288,303] (la columna de la barra) -> muestra qué sprite (code/sx/idx), en qué línea y con qué pen.
+    always @(posedge clk) if (ce) begin
+        // trazar el sprite fantasma idx 259 en TEST (cada línea que se considera) y sus escrituras
+        if (state==TEST && spr_idx==11'd259)
+            $display("BARTEST line=%0d on_line=%b sy_c=%0d py_c=%0d w0=%h w2=%h w3=%h", line_r, on_line, sy_c, py_c, w0_r, w2_r, w3_r);
+        if (state==PWR && spr_on && xin && spr_idx==11'd259 && px==4'd0)
+            $display("BARWR line=%0d lb_wa=%0d xpos=%0d py_c(gpy)=%0d", line_r, lb_wa, xpos, gpy_r);
+        // dump de ambos bancos en x=290 al ARRANCAR cada render (antes de limpiar wbank)
+        if (state==CLR && clr_i==10'd0)
+            $display("CLRSTART line=%0d wbank_r=%b lb0[290]=%h lb1[290]=%h", line_r, wbank_r, lb0[290], lb1[290]);
+    end
+`endif
+
+`ifdef SPR_PXDBG
+    // DIAG "corte derecho": en una banda de scanlines del PUBLICO (engine-line 110..150), traza cada
+    // sprite ON-LINE (TEST) y, en PWR, el gfx leido en px=0 (grupo IZQ) y px=8 (grupo DCHA). Si el grupo
+    // dcho lee 0 (o d_iXX distinto de lo esperado) mientras deberia tener pixeles -> ahi esta el corte.
+    integer nlt=0;
+    always @(posedge clk) if (ce) begin
+        if (state==TEST && line_r==9'd116) begin
+            $display("SPX linea=%0d online=%b sx=%0d code=%h flipx=%b", line_r, on_line, sx_r, code_r, flipx_r);
+        end
+        if (state==PWR && line_r==9'd116 && (px==4'd0 || px==4'd7 || px==4'd8 || px==4'd15)) begin
+            $display("  SPXPWR code=%h px=%0d gpx=%0d rom_a=%h gfx=%h_%h_%h_%h pen=%h spron=%b xin=%b xpos=%0d",
+                     code_r, px, gpx, rom_a, d_i07,d_i09,d_i11,d_i13, pen, spr_on, xin, xpos);
+        end
+    end
+`endif
 endmodule
 
 `default_nettype wire

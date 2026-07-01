@@ -100,40 +100,53 @@ module wrally_tilemap (
     // refresco). NO toca la logica de direccion/atributos (verificada). Anade LEAD de latencia
     // (la compensan LATV/cadena-sprite en wrally_video_top con shift UNIFORME -> skew intacto).
     localparam integer LEAD = 7;
-    reg [7:0] gl07, gl09, gl11, gl13;     // buffer mitad LO (col[3]=0)
-    reg [7:0] gh07, gh09, gh11, gh13;     // buffer mitad HI (col[3]=1)
+    // DOBLE BUFFER POR PARIDAD DE TILE (fix barra roja 2026-07-01): con UN solo par gl/gh, el tile N+1
+    // sobrescribía la mitad del tile N antes de consumirse (LEAD=7 con mitades de 8px = margen 1; con
+    // tiles FLIP-X el orden de carga se invierte y el margen se pierde en el borde -> se decodificaba la
+    // gfx del tile VECINO -> pen erróneo (p.ej. pen14=rojo en zona de nieve). FIX: 2 bancos indexados por
+    // paridad de tile -> mientras se decodifica N (LEAD atrás) se carga N+1 en el OTRO banco, nunca se pisa.
+    reg [7:0] gl07[0:1], gl09[0:1], gl11[0:1], gl13[0:1];   // mitad LO (col1[3]=0), por paridad
+    reg [7:0] gh07[0:1], gh09[0:1], gh11[0:1], gh13[0:1];   // mitad HI (col1[3]=1), por paridad
+    // paridad del tile (tx[0]) REGISTRADA para alinear con col0_d/col1 (que también van registrados desde
+    // tmx_r): sin el registro, wpar=tmx_r[4] iba 1 ciclo ADELANTADO respecto a col1[3] -> 1px del borde de
+    // tile leía el banco equivocado -> línea roja de 1px residual.
+    reg wpar;
+    always @(posedge clk) if (ce) wpar <= tmx_r[4];
     always @(posedge clk) if (ce && gfx_ok) begin
-        if (col1[3]) begin gh07<=d_i07; gh09<=d_i09; gh11<=d_i11; gh13<=d_i13; end
-        else         begin gl07<=d_i07; gl09<=d_i09; gl11<=d_i11; gl13<=d_i13; end
+        if (col1[3]) begin gh07[wpar]<=d_i07; gh09[wpar]<=d_i09; gh11[wpar]<=d_i11; gh13[wpar]<=d_i13; end
+        else         begin gl07[wpar]<=d_i07; gl09[wpar]<=d_i09; gl11[wpar]<=d_i11; gl13[wpar]<=d_i13; end
     end
 
-    // registrar attr + columna (col1[3:0] = mitad + bit) y RETRASAR LEAD ce_pix para alinear
+    // registrar attr + columna (col1[3:0] = mitad + bit) + PARIDAD y RETRASAR LEAD ce_pix para alinear
     // con el buffer ya cargado.
-    reg [4:0] color_d; reg prio_d; reg [3:0] col_d;
+    reg [4:0] color_d; reg prio_d; reg [3:0] col_d; reg par_d;
     always @(posedge clk) if (ce) begin
-        color_d <= color1; prio_d <= prio1; col_d <= col1;
+        color_d <= color1; prio_d <= prio1; col_d <= col1; par_d <= wpar;
     end
     reg [4:0] color_sr [0:LEAD-1];
     reg       prio_sr  [0:LEAD-1];
     reg [3:0] col_sr   [0:LEAD-1];
+    reg       par_sr   [0:LEAD-1];
     integer si;
     always @(posedge clk) if (ce) begin
-        color_sr[0] <= color_d; prio_sr[0] <= prio_d; col_sr[0] <= col_d;
+        color_sr[0] <= color_d; prio_sr[0] <= prio_d; col_sr[0] <= col_d; par_sr[0] <= par_d;
         for (si = 1; si < LEAD; si = si + 1) begin
             color_sr[si] <= color_sr[si-1];
             prio_sr [si] <= prio_sr [si-1];
             col_sr  [si] <= col_sr  [si-1];
+            par_sr  [si] <= par_sr  [si-1];
         end
     end
     wire [4:0] color_c = color_sr[LEAD-1];
     wire       prio_c  = prio_sr [LEAD-1];
     wire [3:0] col_c   = col_sr  [LEAD-1];
+    wire       par_c   = par_sr  [LEAD-1];
 
-    // ---- Etapa 2 : decodificar pen del BUFFER (mitad por col_c[3], bit por col_c[2:0]) ----
-    wire [7:0] db07 = col_c[3] ? gh07 : gl07;
-    wire [7:0] db09 = col_c[3] ? gh09 : gl09;
-    wire [7:0] db11 = col_c[3] ? gh11 : gl11;
-    wire [7:0] db13 = col_c[3] ? gh13 : gl13;
+    // ---- Etapa 2 : decodificar pen del BUFFER (banco por par_c, mitad por col_c[3], bit por col_c[2:0]) ----
+    wire [7:0] db07 = col_c[3] ? gh07[par_c] : gl07[par_c];
+    wire [7:0] db09 = col_c[3] ? gh09[par_c] : gl09[par_c];
+    wire [7:0] db11 = col_c[3] ? gh11[par_c] : gl11[par_c];
+    wire [7:0] db13 = col_c[3] ? gh13[par_c] : gl13[par_c];
     wire [2:0] bbit = 3'd7 - col_c[2:0];  // bit dentro del byte (MSB-first)
     wire [3:0] pen2 = { db07[bbit], db09[bbit], db11[bbit], db13[bbit] };  // i07=MSB..i13=LSB
     always @(posedge clk) if (ce) begin

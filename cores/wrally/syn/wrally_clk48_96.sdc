@@ -40,3 +40,16 @@ set_multicycle_path -from [get_registers {*u_core*}] -setup -end 4
 set_multicycle_path -from [get_registers {*u_core*}] -hold  -end 3
 set_multicycle_path -to   [get_registers {*u_core*}] -setup -end 4
 set_multicycle_path -to   [get_registers {*u_core*}] -hold  -end 3
+
+# === mc8051 COMPLETO (u_mcu) — 2026-07-01: FIX del worst setup -10.184 ===
+# La nota de arriba ("NO afecta a la frontera wram/ROM, el wrapper no lleva *u_core*") era el AGUJERO: el
+# path rom_data_q/rom_addr_r/u_iram -[comb profundo de u_core]-> wrdallas_addr -> PROM portB (y PROM q1 ->
+# rom_data_q) NO estaba constrainido -> Quartus lo analizaba a 1 ciclo (20.8ns) y FALLABA a -10.184 (build
+# 2026-07-01), luego -7.253 (u_iram). TODO u_mcu (u_core + u_iram + wrapper) avanza SÓLO en cen_eff (~48
+# clk48) -> el dato es estable ~48 ciclos = MULTICICLO. Se relaja u_mcu ENTERO (-from y -to): cubre interno
+# + frontera PROM/wram. La PROM/wram sólo las accede el MCU cen-paced (el 68k va por su propio path) ->
+# seguro. Con esto el worst pasa a -0.030 (=path SDRAM de jtframe, ajeno, marginal). Supersede *u_core*.
+set_multicycle_path -from [get_registers {*u_mcu*}] -setup -end 4
+set_multicycle_path -from [get_registers {*u_mcu*}] -hold  -end 3
+set_multicycle_path -to   [get_registers {*u_mcu*}] -setup -end 4
+set_multicycle_path -to   [get_registers {*u_mcu*}] -hold  -end 3
