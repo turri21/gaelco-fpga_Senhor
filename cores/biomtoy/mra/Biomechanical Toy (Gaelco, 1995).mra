@@ -7,8 +7,8 @@
      Planos: plano0=j6/h6, plano1=j7/h7, plano2=j9/h9, plano3=j10/h10 (RGN_FRAC(0..3,4)).
 -->
 <misterromdescription>
-    <rbf>jtbiomtoy</rbf>
-    <name>Biomechanical Toy (Gaelco, V.001)</name>
+    <rbf>biomtoy</rbf>
+    <name>Biomechanical Toy (Gaelco, 1995)</name>
     <setname>biomtoy</setname>
     <year>1995</year>
     <manufacturer>Gaelco</manufacturer>

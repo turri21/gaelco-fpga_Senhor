@@ -31,20 +31,20 @@ loaded at *runtime* from the `.mra`, it is not baked into the bitstream.
 > `VTOTAL` 348→272 for ~57.45 Hz, like World Rally). Both HDMI and analog/CRT supported.
 
 ### Squash (Gaelco, 1992) — *beta*
-68000 @10 MHz, encrypted VRAM. **Status: playable on MiSTer (beta).** `jtsquash_V011.rbf`.
+68000 @10 MHz, encrypted VRAM. **Status: playable on MiSTer (beta).** `squash_20260701.rbf`.
 
 ### Thunder Hoop (Gaelco, 1992) — *beta*
 68000 @12 MHz, encrypted VRAM, gfx with `[0,2,1,3]` de-interleave. **Status: working on MiSTer (beta)**
-(boot, video, audio). `jtthoop_V005.rbf`.
+(boot, video, audio). `thoop_20260701.rbf`.
 
 ### Biomechanical Toy (Gaelco, 1994/95) — *beta*
-68000 @12 MHz, *plain VRAM* (no encryption). **Status: working on MiSTer (beta).** `jtbiomtoy_V002.rbf`.
+68000 @12 MHz, *plain VRAM* (no encryption). **Status: working on MiSTer (beta).** `biomtoy_20260701.rbf`.
 
 ### TH Strikes Back / Thunder Hoop 2 (Gaelco, 1994) — *beta*
 68000 @12 MHz + **DS5002FP** coprocessor (passive protection). Plain VRAM (no encryption), Rev-B sprite
 format. The DS5002 firmware is **loaded at runtime from the `.mra`** (`JTFRAME_PROM_START`, like World Rally) —
 **no firmware is included in this repo**. **Status: boots and passes the self-test on MiSTer (beta).**
-Prebuilt `jtthoop2_V005.rbf` in [`releases/`](releases/) (firmware loaded at runtime from the `.mra`), or build from source (`cores/thoop2/`).
+Prebuilt `thoop2_20260701.rbf` in [`releases/`](releases/) (firmware loaded at runtime from the `.mra`), or build from source (`cores/thoop2/`).
 > ⚠️ The romset **must contain the DS5002 firmware** `thoop2_ds5002fp.bin` (CRC `6881384d`); it is not in the standard MAME set, and without it the coprocessor has no code and the game **freezes a few seconds into play**.
 > (V005 fixes a timing-closure bug present in V004 — the mc8051/DS5002 path was unconstrained, causing **board-dependent freezes during gameplay**.)
 
@@ -58,7 +58,7 @@ validated on hardware. The DS5002 is implemented with the **mc8051** core (Orega
 TH Strikes Back. CRT/analog (15 kHz) timing validated.
 
 The DS5002 firmware is **loaded at runtime from the `.mra`** — **no firmware is included in this repo** and
-**none is baked into the bitstream**. Prebuilt `jtaligator_V016.rbf` in [`releases/`](releases/) —
+**none is baked into the bitstream**. Prebuilt `aligator_20260701.rbf` in [`releases/`](releases/) —
 **distributable** (DS5002 firmware loaded at runtime from the `.mra`, not baked into the bitstream),
 **validated playable on MiSTer**. Or build from source (`cores/aligator/`) applying **both**
 `tools/patch_dallas_runtime.py` + `tools/patch_scratch_runtime.py` (the first builds the runtime program
@@ -79,7 +79,7 @@ monitors are 384×240 (4:3); **Twin** is 768 wide (two 4:3 monitors) shown at **
 Default is **Left** (single, 4:3) so it is playable from boot on a normal monitor/CRT.
 
 The DS5002 firmware is **loaded at runtime from the `.mra`** — **no firmware is included in this repo** and
-**none is baked into the bitstream**. Prebuilt `jtwrally2_V010.rbf` in [`releases/`](releases/) —
+**none is baked into the bitstream**. Prebuilt `wrally2_20260701.rbf` in [`releases/`](releases/) —
 **distributable**, **validated playable on MiSTer**. To build from source (`cores/wrally2/`) apply
 `tools/patch_twin_arx.py` (automatic 8:3 aspect in Twin) and compile with `WR2_CEN_FRAC=1` (13/13 MHz) —
 see [`BUILD.md`](BUILD.md). Unlike World Rally / Alligator, **no DS5002 address patch is needed** (the core
@@ -177,7 +177,7 @@ The cores are playable/working; the items below are polish and do not block game
 - ✅ **Playable on MiSTer** (validated on hardware): boot, video, audio, DS5002 coprocessor, gameplay.
 - ✅ **CRT/analog timing** validated (`HTOTAL`=512 → ~15.6 kHz hsync, `VTOTAL`=264 → ~59.2 Hz).
 - DS5002 firmware loaded at runtime from the `.mra` (no firmware in this repo, none baked in the bitstream).
-- Prebuilt `jtaligator_V016.rbf` in [`releases/`](releases/) — distributable, validated playable on MiSTer.
+- Prebuilt `aligator_20260701.rbf` in [`releases/`](releases/) — distributable, validated playable on MiSTer.
   Build from source needs **both** `tools/patch_dallas_runtime.py` (runtime program PROM) + `tools/patch_scratch_runtime.py` (runtime data SCRATCH).
 
 ### World Rally 2
@@ -185,7 +185,7 @@ The cores are playable/working; the items below are polish and do not block game
 - ✅ **Dual-monitor**: OSD "Monitor" = Left / Right / Twin; Twin (768) shows at **8:3 automatically**. Default = Left (single 4:3).
 - ✅ CPU/MCU at faithful **13/13 MHz** (fractional cen, `WR2_CEN_FRAC`).
 - DS5002 firmware loaded at runtime from the `.mra` (no firmware in this repo, none baked in the bitstream).
-- Prebuilt `jtwrally2_V010.rbf` in [`releases/`](releases/) — distributable, validated playable on MiSTer.
+- Prebuilt `wrally2_20260701.rbf` in [`releases/`](releases/) — distributable, validated playable on MiSTer.
 - ⚠️ Minor known cosmetic issue: in the cliff area a few grass sprites draw over the rocks (sprite priority vs MAME); does not affect gameplay.
 
 ## Credits
@@ -246,14 +246,14 @@ carga en *runtime* desde el `.mra`, no va horneado en el bitstream.
 > Soporta tanto HDMI como analógica/CRT.
 
 ### Squash (Gaelco, 1992) — *beta*
-68000 @10 MHz, VRAM cifrada. **Estado: jugable en MiSTer (beta).** `jtsquash_V011.rbf`.
+68000 @10 MHz, VRAM cifrada. **Estado: jugable en MiSTer (beta).** `squash_20260701.rbf`.
 
 ### Thunder Hoop (Gaelco, 1992) — *beta*
 68000 @12 MHz, VRAM cifrada, gfx con de-interleave `[0,2,1,3]`. **Estado: funcionando en MiSTer (beta)**
-(arranque, vídeo, audio). `jtthoop_V005.rbf`.
+(arranque, vídeo, audio). `thoop_20260701.rbf`.
 
 ### Biomechanical Toy (Gaelco, 1994/95) — *beta*
-68000 @12 MHz, *VRAM plana* (sin cifrado). **Estado: funcionando en MiSTer (beta).** `jtbiomtoy_V002.rbf`.
+68000 @12 MHz, *VRAM plana* (sin cifrado). **Estado: funcionando en MiSTer (beta).** `biomtoy_20260701.rbf`.
 
 ### Alligator Hunt (Gaelco, 1994)
 **Primer core Gaelco Tipo-2** (`gaelco2.cpp`, chip custom **GAE1**): **MC68000** + coprocesador
@@ -265,7 +265,7 @@ validados en hardware. El DS5002 se implementa con el core **mc8051** (Oregano),
 TH Strikes Back. Timing CRT/analógico (15 kHz) validado.
 
 El firmware del DS5002 se **carga en runtime desde el `.mra`** — **no se incluye firmware en este repo** y
-**no va horneado en el bitstream**. `.rbf` precompilado `jtaligator_V016.rbf` en [`releases/`](releases/) —
+**no va horneado en el bitstream**. `.rbf` precompilado `aligator_20260701.rbf` en [`releases/`](releases/) —
 **distribuible** (firmware del DS5002 cargado en runtime desde el `.mra`, no horneado en el bitstream),
 **validado jugable en MiSTer**. O compilar desde fuente (`cores/aligator/`) aplicando **los dos**
 `tools/patch_dallas_runtime.py` + `tools/patch_scratch_runtime.py` (el primero hace el PROM del programa en
@@ -287,7 +287,7 @@ fraccional). La opción de OSD **"Monitor"** elige **Left / Right / Twin**: los 
 defecto arranca en **Left** (individual 4:3) para que sea jugable desde el arranque en un monitor/CRT normal.
 
 El firmware del DS5002 se **carga en runtime desde el `.mra`** — **no se incluye firmware en este repo** y
-**no va horneado en el bitstream**. `.rbf` precompilado `jtwrally2_V010.rbf` en [`releases/`](releases/) —
+**no va horneado en el bitstream**. `.rbf` precompilado `wrally2_20260701.rbf` en [`releases/`](releases/) —
 **distribuible**, **validado jugable en MiSTer**. Para compilar desde fuente (`cores/wrally2/`) aplica
 `tools/patch_twin_arx.py` (8:3 automático en Twin) y compila con `WR2_CEN_FRAC=1` (13/13 MHz) — ver
 [`BUILD.md`](BUILD.md). A diferencia de World Rally / Alligator, **no hace falta parche de dirección del
@@ -379,7 +379,7 @@ Los cores son jugables/funcionales; lo de abajo es pulido y no bloquea la partid
 - ✅ **Jugable en MiSTer** (validado en hardware): arranque, vídeo, audio, coprocesador DS5002, partida.
 - ✅ **Timing CRT/analógico** validado (`HTOTAL`=512 → hsync ~15,6 kHz, `VTOTAL`=264 → ~59,2 Hz).
 - Firmware del DS5002 cargado en runtime desde el `.mra` (sin firmware en el repo, sin hornear en el bitstream).
-- `.rbf` precompilado `jtaligator_V016.rbf` en [`releases/`](releases/) — distribuible, validado jugable en MiSTer.
+- `.rbf` precompilado `aligator_20260701.rbf` en [`releases/`](releases/) — distribuible, validado jugable en MiSTer.
   Compilar desde fuente requiere **los dos** `tools/patch_dallas_runtime.py` (PROM del programa en runtime) + `tools/patch_scratch_runtime.py` (SCRATCH de datos en runtime).
 
 ## Créditos

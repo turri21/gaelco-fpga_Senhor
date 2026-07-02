@@ -13,8 +13,8 @@
        U2 4MB: gap -> 16MB
      PROBAR HW: test_mra.sh (UART scratch>0) + screenshot (colores) + oido (sonido). -->
 <misterromdescription>
-    <rbf>jtwrally2</rbf>
-    <name>World Rally 2 (Gaelco, 1995, V.014)</name>
+    <rbf>wrally2</rbf>
+    <name>World Rally 2 (Gaelco, 1995)</name>
     <setname>wrally2</setname>
     <year>1995</year>
     <manufacturer>Gaelco</manufacturer>

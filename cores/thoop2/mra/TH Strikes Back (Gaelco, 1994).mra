@@ -14,8 +14,8 @@
      el grado de libertad a calibrar con el golden-python; para el SMOKE no afecta (gfx no interviene en boot).
 -->
 <misterromdescription>
-    <rbf>jtthoop2</rbf>
-    <name>TH Strikes Back (Gaelco, V.002)</name>
+    <rbf>thoop2</rbf>
+    <name>TH Strikes Back (Gaelco, 1994)</name>
     <setname>thoop2</setname>
     <year>1994</year>
     <manufacturer>Gaelco</manufacturer>
