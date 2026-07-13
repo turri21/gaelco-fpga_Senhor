@@ -25,6 +25,8 @@ aligator:
     - aligator_gae1_palette.v   # RGB555 + ajuste shadow/highlight
     - aligator_gae1_sound.v     # sonido GAE1: 7 canales estéreo, samples en las ROMs de gfx (volume_table.mem)
     # --- 68000 (fx68k, ijor, GPLv3); microrom/nanorom.mem en hdl/ ---
+fx68k:
+  - get:
     - fx68k.sv
     - fx68kAlu.sv
     - uaddrPla.sv
