@@ -1,3 +1,13 @@
+-=(Senhor Notes)=-
+
+JTBIOMTOY mister compilation starts at 03:23:13 with seed 1 on mint
+Line is longer than 32 characters at line 1
+
+Edit the 1st line of jtcores/cores/biomtoy/cfg/msg
+into this:
+Biomechanical Toy (Gaelco,1995)
+
+___
 # gaelco-fpga
 
 🇬🇧 English (below) · [🇪🇸 Español](#español)
