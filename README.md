@@ -18,6 +18,8 @@ set_global_assignment -name MAX_CORE_JUNCTION_TEMP 125
 
 Copy the individual cores from inside the cores folder into /jtcores/cores/
 
+___
+
 *** This is already fixed in the repo. ***
 
 JTBIOMTOY mister compilation starts at 03:23:13 with seed 1 on mint
