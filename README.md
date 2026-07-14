@@ -2,19 +2,11 @@
 
 Clone the jtcores along with the required modules.
 
-Copy the sys.tcl sys_analog.tcl for Senhor in jtcores/modules/jtframe/target/mister/hdl/sys
+Clone this repo.
 
-Also, you have to edit the sys_top.v file in order to disable several analog signals not needed in Senhor as well as to include
+Copy (and replace) from Senhor/sys.zip the files: sys.tcl, sys_analog.tcl, sys_dual_sdram.tcl, sys_top.v into jtcores/modules/jtframe/target/mister/hdl/sys
 
-the initialization section for the board.
-
-Edit the jtcores/modules/jtframe/target/mister.qsf
-
-Change the line set_global_assignment -name MAX_CORE_JUNCTION_TEMP 100
-
-to 
-
-set_global_assignment -name MAX_CORE_JUNCTION_TEMP 125
+Copy (and replace) from Senhor folder the file mister.qsf into jtcores/modules/jtframe/target/mister.qsf
 
 Copy the individual cores from inside the cores folder into /jtcores/cores/
 
