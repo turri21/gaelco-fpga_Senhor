@@ -37,10 +37,14 @@ bigkarnk:
     - jt6295_sh_rst.v
     - jt6295_timing.v
     # --- 68000 (fx68k, ijor, GPLv3); microrom/nanorom.mem en hdl/ ---
+fx68k:
+  - get:
     - fx68k.sv
     - fx68kAlu.sv
     - uaddrPla.sv
     # --- DTACK + cens del 68000 (copia local, sin freqinfo) ---
+bigkarnk:
+  - get:
     - bigkarnk_68kdtack.v
 # --- modulos jtframe extra para el subsistema de sonido ---
 jtframe:
