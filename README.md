@@ -1,5 +1,7 @@
 -=(Senhor Notes)=-
 
+*** This is already fixed in the repo. ***
+
 JTBIOMTOY mister compilation starts at 03:23:13 with seed 1 on mint
 
 Line is longer than 32 characters at line 1
