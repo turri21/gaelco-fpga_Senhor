@@ -26,6 +26,8 @@ thoop2:
     - thoop2_sprite_layer.v   # capa de sprites (ping-pong doble buffer)
     - thoop2_sprite_engine.v  # sprites (formato Rev B: size@w0[11], flip@w0[14/15], code 18b)
     # --- OKI (jt6295, GPLv3) ---
+jt6295:
+  - get:
     - jt6295.v
     - jt6295_acc.v
     - jt6295_adpcm.v
@@ -35,12 +37,19 @@ thoop2:
     - jt6295_sh_rst.v
     - jt6295_timing.v
     # --- 68000 (fx68k, ijor, GPLv3); microrom/nanorom.mem en hdl/ ---
+fx68k:
+  - get:
     - fx68k.sv
     - fx68kAlu.sv
     - uaddrPla.sv
+thoop2:
+  - get:
     # --- DTACK + cens del 68000 (copia local, sin freqinfo) ---
     - thoop2_68kdtack.v
     # --- DS5002FP (mc8051 Oregano/jtframe, COMPLETO; mismo camino que WRally/aligator) ---
     - thoop2_mcu.v       # wrapper mc8051 (clon de aligator_mcu): IRAM/SFR + ROM(firmware) + MOVX
     - mc8051_regen.v     # core mc8051 (VHDL->Verilog)
+jtframe:
+  - from: ram
+    get:
     - jtframe_ram_rst.v  # IRAM 256B del wrapper
