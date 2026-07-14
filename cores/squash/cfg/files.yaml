@@ -24,6 +24,8 @@ squash:
     - squash_sprite_layer.v   # capa de sprites (ping-pong doble buffer)
     - squash_sprite_engine.v  # sprites 8x8/16x16, line buffer
     # --- OKI (jt6295, GPLv3) ---
+jt6295:
+  - get:
     - jt6295.v
     - jt6295_acc.v
     - jt6295_adpcm.v
@@ -33,8 +35,12 @@ squash:
     - jt6295_sh_rst.v
     - jt6295_timing.v
     # --- 68000 (fx68k, ijor, GPLv3); microrom/nanorom.mem en hdl/ ---
+fx68k:
+  - get:
     - fx68k.sv
     - fx68kAlu.sv
     - uaddrPla.sv
     # --- DTACK + cens del 68000 (copia local, sin freqinfo) ---
+squash:
+  - get:
     - squash_68kdtack.v
