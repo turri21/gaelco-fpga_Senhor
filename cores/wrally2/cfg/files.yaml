@@ -27,14 +27,21 @@ wrally2:
     - wrally2_gae1_palette.v   # RGB555 + ajuste shadow/highlight
     - wrally2_gae1_sound.v     # sonido GAE1: 7 canales estéreo, samples en las ROMs de gfx (volume_table.mem)
     # --- 68000 (fx68k, ijor, GPLv3); microrom/nanorom.mem en hdl/ ---
+fx68k:
+  - get:
     - fx68k.sv
     - fx68kAlu.sv
     - uaddrPla.sv
     # --- DTACK + cens del 68000 (copia local, sin freqinfo) ---
+wrally2:
+  - get:
     - wrally2_68kdtack.v
     # --- DS5002FP (mc8051 Oregano/jtframe, COMPLETO; mismo camino que WRally) ---
     - wrally2_mcu.v     # wrapper: IRAM/SFR internos; ROM (firmware) + xdata (MOVX) externos
     - mc8051_regen.v     # core mc8051 (VHDL->Verilog via ghdl)
+jtframe:
+  - from: ram
+    get:
     - jtframe_ram_rst.v  # IRAM 256B del wrapper
     # === FUERA DEL BUILD (fase GAE1/sonido/DS5002) — se reintroducen al adaptarlos ===
     # Tipo-1 clonado (base para el motor GAE1):
