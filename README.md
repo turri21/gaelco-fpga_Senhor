@@ -1,5 +1,9 @@
 -=(Senhor Notes)=-
 
+Clone the jtcores along with the required modules.
+
+Copy the individual cores from inside the cores folder into /jtcores/cores/
+
 *** This is already fixed in the repo. ***
 
 JTBIOMTOY mister compilation starts at 03:23:13 with seed 1 on mint
